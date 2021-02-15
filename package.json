@@ -1,0 +1,30 @@
+{
+  "name": "universal-reactive-forms",
+  "version": "1.0.0",
+  "description": "A package for creating reactive forms based on Angular's Reactive Forms.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "prepublish": "tsc",
+  "dependencies": {
+    "rxjs": "^6.0.0",
+    "rxjs-observe": "^2.1.5",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/uuid": "^8.3.0",
+    "typescript": "^4.1.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sandrohaiden/universal-reactive-forms.git"
+  },
+  "author": "Sandro Haiden Teixeira",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sandrohaiden/universal-reactive-forms/issues"
+  },
+  "homepage": "https://github.com/sandrohaiden/universal-reactive-forms#readme"
+}
