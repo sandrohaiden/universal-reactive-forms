@@ -6,6 +6,7 @@ export class FormArray extends AbstractControl {
 
   private _formArray: AbstractControl[] = [];
   private _initialFormArray: AbstractControl[] = [];
+  private _initialEnabled: boolean;
   private _touched: boolean = false;
   private _enabled: boolean;
 
@@ -18,6 +19,7 @@ export class FormArray extends AbstractControl {
     super();
     this._initialFormArray.push(...controls.map((item) => item.getInitial()));
     this._enabled = enabled;
+    this._initialEnabled = enabled;
     for (const item of controls) {
       if(!enabled) item.disable();
       this.push(item);
@@ -77,7 +79,7 @@ export class FormArray extends AbstractControl {
   }
 
   getInitial() {
-    return new FormArray(this._initialFormArray);
+    return new FormArray(this._initialFormArray, this._initialEnabled);
   }
 
   getRawValue() {

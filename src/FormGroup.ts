@@ -7,6 +7,7 @@ export class FormGroup extends AbstractControl {
   private _form: Form;
   private _initialValue: Form;
   private _enabled: boolean;
+  private _initialEnabled: boolean;
   private _touched: boolean = false;
   readonly type: FormType = FormType.GROUP;
 
@@ -29,6 +30,7 @@ export class FormGroup extends AbstractControl {
     }
     this._form = form;
     this._enabled = enabled;
+    this._initialEnabled = enabled;
   }
 
   get controls() {
@@ -84,7 +86,7 @@ export class FormGroup extends AbstractControl {
   }
 
   getInitial() {
-    const form = new FormGroup(this._initialValue);
+    const form = new FormGroup(this._initialValue, this._initialEnabled);
     return form;
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "universal-reactive-forms",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A package for creating reactive forms based on Angular's Reactive Forms.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
