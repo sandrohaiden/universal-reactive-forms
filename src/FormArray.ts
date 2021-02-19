@@ -9,11 +9,17 @@ export class FormArray extends AbstractControl {
   private _touched: boolean = false;
   private _enabled: boolean;
 
+  /**
+   * 
+   * @param controls A vector of form items.
+   * @param enabled Optional param that Indicate the firstly status of FormArray instance. The default value is true.
+   */
   constructor(controls: AbstractControl[] = [], enabled: boolean = true) {
     super();
     this._initialFormArray.push(...controls.map((item) => item.getInitial()));
     this._enabled = enabled;
     for (const item of controls) {
+      if(!enabled) item.disable();
       this.push(item);
     }
   }
