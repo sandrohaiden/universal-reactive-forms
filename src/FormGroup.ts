@@ -21,9 +21,12 @@ export class FormGroup extends AbstractControl {
    * @param enabled Optional param that Indicate the firstly status of FormGroup instance. The default value is true.
    *
    */
-  constructor(form: Form, enabled = true) {
+  constructor(form: Form, enabled: boolean = true) {
     super();
     this._initialValue = this._getInitiaValue(form);
+    if(!enabled) {
+      Object.values(form).forEach(control => control.disable())
+    }
     this._form = form;
     this._enabled = enabled;
   }

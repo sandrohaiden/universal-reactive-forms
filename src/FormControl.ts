@@ -43,17 +43,16 @@ export class FormControl extends AbstractControl {
 
   /**
    *
-   * @param initialValue Object with initial child Form Items.
+   * @param initialValue value for `FormControl`.
    *
-   * @param validators Array with initial sync Validator.
-   * @param asyncValidators Array with initial async Validator.
-   * @param enabled Boolean that means the initial state of this Form Item.
+   * @param validators Array with initial sync Validators.
+   * @param asyncValidators Array with initial async Validators.
    * @param opts Object of options to `FormControl`
    */
   constructor(
     initialValue: any,
     validators?: SyncValidator[],
-    asyncValidators?: any[],
+    asyncValidators?: AsyncValidator[],
     opts?: FormControlOptions
   ) {
     super();
