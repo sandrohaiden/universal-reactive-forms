@@ -1,4 +1,4 @@
-import { AbstractControl } from "./AbstractControl";
+import { AbstractControl, ValidationErrors } from "./AbstractControl";
 import { FormType, Status } from "./FormEnuns";
 
 export type Form = { [key: string]: AbstractControl };
@@ -25,8 +25,8 @@ export class FormGroup extends AbstractControl {
   constructor(form: Form, enabled: boolean = true) {
     super();
     this._initialValue = this._getInitiaValue(form);
-    if(!enabled) {
-      Object.values(form).forEach(control => control.disable())
+    if (!enabled) {
+      Object.values(form).forEach((control) => control.disable());
     }
     this._form = form;
     this._enabled = enabled;
@@ -174,6 +174,12 @@ export class FormGroup extends AbstractControl {
   setAsyncValidators() {
     throw Error(
       "This control is a FormGroup. Async Validators is not Allowed in FormGroup"
+    );
+  }
+
+  setErrors(errors: ValidationErrors) {
+    throw Error(
+      "This control is a FormGroup. FormGroup not have a logic defined for setErrors method."
     );
   }
 

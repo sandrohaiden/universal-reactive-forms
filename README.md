@@ -156,6 +156,8 @@ Definitions of common methods among Form Items:
 	export abstract class AbstractControl {
       abstract readonly type: FormType;
 
+      readonly id: string = v4();
+
       /**
       * If this form is enabled, `true` will be returned, in the case of disabled,` false` will be returned.
       */
@@ -164,7 +166,7 @@ Definitions of common methods among Form Items:
       /**
       * Return a object with error keys and your message.
       */
-      abstract get errors(): { [key: string]: string };
+      abstract get errors(): ValidationErrors;
 
       /**
       * Return a array of error`s messages.
@@ -245,18 +247,25 @@ Definitions of common methods among Form Items:
       /**
       * Marks the control and all its descendant controls as touched.
       */
-      abstract markAllAsTouched(): void
+      abstract markAllAsTouched(): void;
 
       /**
       * Marks the control as touched.
       */
-      abstract markAsTouched(): void
+      abstract markAsTouched(): void;
 
       /**
       * If this Form Item is a FormControl, this method  will be set async Validators.
       * @param asyncValidators Array of AsyncValidators.
       */
       abstract setAsyncValidators(asyncValidators: AsyncValidator[]): void;
+
+      /**
+      * If this Form Item is a FormControl, this method will set one primary error manually. If a change in value is detected,
+      * these errors will be discarted.
+      * @param errors Object with one Key and message string as value.
+      */
+      abstract setErrors(errors: ValidationErrors): void;
 
       /**
       * If this Form Item is a FormControl, this method  will be set sync Validators.

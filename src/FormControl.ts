@@ -3,7 +3,7 @@ import { Observables, observe } from "rxjs-observe";
 import { tap } from "rxjs/internal/operators/tap";
 import { takeUntil } from "rxjs/internal/operators/takeUntil";
 import { filter } from "rxjs/internal/operators/filter";
-import { AbstractControl } from "./AbstractControl";
+import { AbstractControl, ValidationErrors } from "./AbstractControl";
 import { FormType, Status } from "./FormEnuns";
 import { v4 } from "uuid";
 import { skip } from "rxjs/internal/operators/skip";
@@ -26,8 +26,9 @@ export class FormControl extends AbstractControl {
   private _enabled = true;
   private _validators: any[] = [];
   private _asyncValidators: any[] = [];
-  private _asyncErrors: { [key: string]: any } = {};
-  private _errors: { [key: string]: any } = {};
+  private _asyncErrors: ValidationErrors = {};
+  private _errors: ValidationErrors = {};
+  private _manualErrors: ValidationErrors = {};
 
   private _initialValue: any;
   private _initialEnabled: boolean;
@@ -108,6 +109,8 @@ export class FormControl extends AbstractControl {
   setAsyncValidators(asyncValidators: AsyncValidator[]) {
     this.unsubscribeAsync$.next();
     const observables: Observable<any>[] = [];
+    this._asyncErrors = {};
+
     asyncValidators.forEach((validator) => {
       const id = v4();
       const observable = this._changesForValidators.pipe(
@@ -122,29 +125,41 @@ export class FormControl extends AbstractControl {
 
     combineLatest(observables)
       .pipe(takeUntil(this.unsubscribeAsync$))
-      .subscribe((res: any) => {
-        this._asyncErrors = {};
-        res
-          .filter((err: any) => err)
-          .forEach((result: any) => {
-            this._asyncErrors = { ...this._asyncErrors, ...result };
-          });
-      });
+      .subscribe(
+        (res: any) => {
+          this._asyncErrors = {};
+          res
+            .filter((err: any) => err)
+            .forEach((result: any) => {
+              this._asyncErrors = { ...this._asyncErrors, ...result };
+            });
+          this.pendingAsyncValidatorsRegister = {};
+        },
+        () => (this.pendingAsyncValidatorsRegister = {})
+      );
+  }
+
+  setErrors(errors: ValidationErrors) {
+    this._manualErrors = errors;
   }
 
   setValidators(validators: SyncValidator[]) {
+    this._errors = {};
     this._changesForValidators
       .pipe(
         takeUntil(this.unsubscribeSync$),
         tap(() => (this.pendingValidatorsRegister = true))
       )
-      .subscribe((value) => {
-        this._errors = {};
-        validators.forEach((validator) => {
-          const validation = validator(value);
-          if (validation) this._errors = { ...this._errors, ...validation };
-        });
-      });
+      .subscribe(
+        (value) => {
+          this._errors = {};
+          validators.forEach((validator) => {
+            const validation = validator(value);
+            if (validation) this._errors = { ...this._errors, ...validation };
+          });
+        },
+        () => (this._errors = {})
+      );
   }
 
   setValue(value: any, emitEvent: boolean = true) {
@@ -212,7 +227,13 @@ export class FormControl extends AbstractControl {
   }
 
   get errors() {
-    return this._touched ? { ...this._errors, ...(this.pending ? {} : this._asyncErrors) } : {};
+    return this._touched
+      ? {
+          ...this._manualErrors,
+          ...this._errors,
+          ...(this.pending ? {} : this._asyncErrors),
+        }
+      : {};
   }
 
   get errorsMessages() {
@@ -232,13 +253,14 @@ export class FormControl extends AbstractControl {
   }
 
   set value(value: any) {
-    if (this._valueSetter) value = this._valueSetter(value);
+    if (value !== "" && this._valueSetter) value = this._valueSetter(value);
     this._proxy.value = value;
   }
 
   get valueChanges(): Observable<any> {
     return (this._observables.value as Observable<any>).pipe(
-      filter(() => this.emitEvent)
+      filter(() => this.emitEvent),
+      tap(() => (this._manualErrors = {}))
     );
   }
 
@@ -255,7 +277,13 @@ export class FormControl extends AbstractControl {
     )
       return Status.PENDING;
 
-    return Object.values({...this._errors, ...this._asyncErrors}).length ? Status.INVALID : Status.VALID;
+    return Object.values({
+      ...this._manualErrors,
+      ...this._errors,
+      ...this._asyncErrors,
+    }).length
+      ? Status.INVALID
+      : Status.VALID;
   }
 
   get(control: string): AbstractControl {

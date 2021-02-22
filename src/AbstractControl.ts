@@ -1,8 +1,13 @@
 import { FormType, Status } from "./FormEnuns";
 import { AsyncValidator, SyncValidator } from "./Validators";
+import { v4 } from "uuid";
+
+export type ValidationErrors = { [key: string]: string }
 
 export abstract class AbstractControl {
   abstract readonly type: FormType;
+
+  readonly id: string = v4();
 
   /**
    * If this form is enabled, `true` will be returned, in the case of disabled,` false` will be returned.
@@ -12,7 +17,7 @@ export abstract class AbstractControl {
   /**
    * Return a object with error keys and your message.
    */
-  abstract get errors(): { [key: string]: string };
+  abstract get errors(): ValidationErrors;
 
   /**
    * Return a array of error`s messages.
@@ -105,6 +110,13 @@ export abstract class AbstractControl {
    * @param asyncValidators Array of AsyncValidators.
    */
   abstract setAsyncValidators(asyncValidators: AsyncValidator[]): void;
+
+  /**
+   * If this Form Item is a FormControl, this method will set one primary error manually. If a change in value is detected,
+   * these errors will be discarted.
+   * @param errors Object with one Key and message string as value.
+   */
+  abstract setErrors(errors: ValidationErrors): void;
 
   /**
    * If this Form Item is a FormControl, this method  will be set sync Validators.
