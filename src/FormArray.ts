@@ -1,4 +1,4 @@
-import { AbstractControl } from "./AbstractControl";
+import { AbstractControl, ValidationErrors } from "./AbstractControl";
 import { FormType, Status } from "./FormEnuns";
 
 export class FormArray extends AbstractControl {
@@ -11,7 +11,7 @@ export class FormArray extends AbstractControl {
   private _enabled: boolean;
 
   /**
-   * 
+   *
    * @param controls A vector of form items.
    * @param enabled Optional param that Indicate the firstly status of FormArray instance. The default value is true.
    */
@@ -21,7 +21,7 @@ export class FormArray extends AbstractControl {
     this._enabled = enabled;
     this._initialEnabled = enabled;
     for (const item of controls) {
-      if(!enabled) item.disable();
+      if (!enabled) item.disable();
       this.push(item);
     }
   }
@@ -128,6 +128,12 @@ export class FormArray extends AbstractControl {
   setAsyncValidators(): void {
     throw Error(
       "This control is a FormArray. Async Validators is not Allowed in FormArray"
+    );
+  }
+
+  setErrors(errors: ValidationErrors) {
+    throw Error(
+      "This control is a FormArray. FormArray not have a logic defined for setErrors method."
     );
   }
 
