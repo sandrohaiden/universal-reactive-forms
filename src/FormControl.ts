@@ -5,7 +5,6 @@ import { takeUntil } from "rxjs/internal/operators/takeUntil";
 import { filter } from "rxjs/internal/operators/filter";
 import { AbstractControl, ValidationErrors } from "./AbstractControl";
 import { FormType, Status } from "./FormEnuns";
-import { v4 } from "uuid";
 import { skip } from "rxjs/internal/operators/skip";
 import { first } from "rxjs/internal/operators/first";
 import { debounceTime } from "rxjs/internal/operators/debounceTime";
@@ -38,7 +37,7 @@ export class FormControl extends AbstractControl {
   private unsubscribe$: Subject<any> = new Subject();
   private unsubscribeSync$: Subject<any> = new Subject();
   private unsubscribeAsync$: Subject<any> = new Subject();
-  private pendingAsyncValidatorsRegister: { [key: string]: boolean } = {};
+  private pendingAsyncValidatorsRegister: boolean = false;
   private pendingValidatorsRegister: boolean = false;
   private emitEvent: boolean = true;
 
@@ -112,12 +111,10 @@ export class FormControl extends AbstractControl {
     this._asyncErrors = {};
 
     asyncValidators.forEach((validator) => {
-      const id = v4();
+      this.pendingAsyncValidatorsRegister = true;
       const observable = this._changesForValidators.pipe(
         takeUntil(this.unsubscribeAsync$),
-        tap(() => (this.pendingAsyncValidatorsRegister[id] = true)),
         validator(),
-        tap(() => (this.pendingAsyncValidatorsRegister[id] = false))
       );
 
       observables.push(observable);
@@ -133,9 +130,9 @@ export class FormControl extends AbstractControl {
             .forEach((result: any) => {
               this._asyncErrors = { ...this._asyncErrors, ...result };
             });
-          this.pendingAsyncValidatorsRegister = {};
+          this.pendingAsyncValidatorsRegister = false;
         },
-        () => (this.pendingAsyncValidatorsRegister = {})
+        () => (this.pendingAsyncValidatorsRegister = false)
       );
   }
 
@@ -270,9 +267,7 @@ export class FormControl extends AbstractControl {
 
   get status() {
     if (
-      Object.values({
-        ...this.pendingAsyncValidatorsRegister,
-      }).filter((item) => item).length &&
+      this.pendingAsyncValidatorsRegister &&
       this.pendingValidatorsRegister
     )
       return Status.PENDING;
