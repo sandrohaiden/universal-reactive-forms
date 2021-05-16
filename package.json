@@ -1,14 +1,14 @@
 {
   "name": "universal-reactive-forms",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "A package for creating reactive forms based on Angular's Reactive Forms.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "prepublish": "tsc",
   "dependencies": {
+    "nanoid": "^3.1.23",
     "rxjs": "^6.0.0",
-    "rxjs-observe": "^2.1.5",
-    "uuid": "^8.3.2"
+    "rxjs-observe": "^2.1.5"
   },
   "devDependencies": {
     "@types/uuid": "^8.3.0",
@@ -26,5 +26,15 @@
   "bugs": {
     "url": "https://github.com/sandrohaiden/universal-reactive-forms/issues"
   },
-  "homepage": "https://github.com/sandrohaiden/universal-reactive-forms#readme"
+  "homepage": "https://github.com/sandrohaiden/universal-reactive-forms#readme",
+  "keywords": [
+    "Forms",
+    "Observable",
+    "Reactive Forms",
+    "RxJs",
+    "Svelt",
+    "Universal",
+    "Validation",
+    "Vue"
+  ]
 }

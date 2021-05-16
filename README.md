@@ -156,7 +156,7 @@ Definitions of common methods among Form Items:
 	export abstract class AbstractControl {
       abstract readonly type: FormType;
 
-      readonly id: string = v4();
+      readonly id: string = nanoid();
 
       /**
       * If this form is enabled, `true` will be returned, in the case of disabled,` false` will be returned.

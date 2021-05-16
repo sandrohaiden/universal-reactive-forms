@@ -1,13 +1,13 @@
 import { FormType, Status } from "./FormEnuns";
 import { AsyncValidator, SyncValidator } from "./Validators";
-import { v4 } from "uuid";
+import { nanoid } from "nanoid";
 
 export type ValidationErrors = { [key: string]: string }
 
 export abstract class AbstractControl {
   abstract readonly type: FormType;
 
-  readonly id: string = v4();
+  readonly id: string = nanoid();
 
   /**
    * If this form is enabled, `true` will be returned, in the case of disabled,` false` will be returned.
